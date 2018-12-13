@@ -1,0 +1,23 @@
+{
+  "name": "sushi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "hnak",
+  "license": "MIT",
+  "scripts": {
+    "serve": "./node_modules/.bin/nodemon app/main.js"
+  },
+  "dependencies": {
+    "@slack/client": "^4.8.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "cron": "^1.6.0",
+    "dotenv": "^6.2.0",
+    "loom-js": "^1.36.0",
+    "slack": "^11.0.1",
+    "web3": "^1.0.0-beta.37"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.8"
+  }
+}
