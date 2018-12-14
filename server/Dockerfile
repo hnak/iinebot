@@ -9,8 +9,11 @@ WORKDIR /server
 
 RUN apk add --no-cache --virtual .gyp python make g++ \
     && apk --no-cache add avahi-dev \
-    && npm install mdns \
+    && yarn add mdns \
     && apk del .gyp
+    
+RUN apk update && apk upgrade && \
+    apk add --no-cache git
 
 COPY . .
 RUN yarn install
