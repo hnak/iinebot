@@ -1,4 +1,3 @@
-// main.js
 const { RTMClient } = require('@slack/client');
 const dotenv = require('dotenv');
 const LoomClient = require('./LoomClient');
@@ -52,9 +51,9 @@ const job = new CronJob({
     Months: 0-11
     Day of Week: 0-6
     */
-    cronTime: '0 0 9 0 * *', // 毎日午前9時に送信
+    cronTime: '0 * * * * *', // 毎日午前9時に送信
     onTick: aggregate,
     start: false,
     timeZone: 'Asia/Tokyo'
-  });
-  job.start();
+});
+job.start();

@@ -1,6 +1,6 @@
 const Web3 = require('web3');
 const { Client, LocalAddress, CryptoUtils, LoomProvider } = require('loom-js');
-const ToiwareToken = require('../../dappchain/build/contracts/ToiwareToken.json');
+const ToiwareToken = require('../abi/ToiwareToken.json');
 
 const privateKeyBase64 =
   '4J4On/kqG74sNyI/aaf7e5599fb7G+d69HIj7yQ/W/UsKkUhUjIG+H7luSNZrnb4dtVeLy5O1m7UaXtCBr/W5g==';

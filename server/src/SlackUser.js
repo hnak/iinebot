@@ -78,7 +78,7 @@ const botToken = process.env.SLACK_BOT_TOKEN || '';
 const SEND_CHANNEL = 'test';
 
 class SlackUser {
-    getAddressFromSlackId(id) {
+    async getAddressFromSlackId(id) {
       for( var user of users ) {
         if (user.id === id) {
           return user
