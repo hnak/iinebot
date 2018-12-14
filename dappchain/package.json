@@ -8,8 +8,9 @@
     "compile": "truffle compile",
     "deploy:ropsten": "rm -rf build; truffle migrate --reset --network ropsten",
     "deploy:kovan": "rm -rf build; truffle migrate --reset --network kovan",
-    "deploy:local": "rm -rf build; truffle migrate --reset --network loom_dapp_chain",
-    "deploy:test": "rm -rf build; truffle migrate --reset --network extdev_plasma_us1"
+    "deploy:local": "rm -rf build; truffle migrate --reset --network local_chain",
+    "deploy:test": "rm -rf build; truffle migrate --reset --network testenv_chain",
+    "deploy:extdev": "rm -rf build; truffle migrate --reset --network extdev_plasma_us1"
   },
   "dependencies": {
     "loom-truffle-provider": "^0.8.0",

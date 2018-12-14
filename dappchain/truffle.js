@@ -18,11 +18,20 @@ const privateKey = readFileSync('./private_key', 'utf-8')
 
 module.exports = {
   networks: {
-    loom_dapp_chain: {
+    local_chain: {
       provider: function () {
         const chainId = 'default'
         const writeUrl = 'http://127.0.0.1:46658/rpc'
         const readUrl = 'http://127.0.0.1:46658/query'
+        return new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
+      },
+      network_id: '*'
+    },
+    testenv_chain: {
+      provider: function () {
+        const chainId = 'default'
+        const writeUrl = 'http://35.227.57.155:46658/rpc'
+        const readUrl = 'http://35.227.57.155:46658/query'
         return new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
       },
       network_id: '*'

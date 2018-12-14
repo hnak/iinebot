@@ -13,16 +13,20 @@ const client = new Client(
     // 'ws://127.0.0.1:46658/websocket',
     // 'ws://127.0.0.1:46658/queryws'
     // For Test
-    'extdev-plasma-us1',
-    'wss://extdev-plasma-us1.dappchains.com/websocket',
-    'wss://extdev-plasma-us1.dappchains.com/queryws'
+    'default',
+    'ws://35.227.57.155:46658/websocket',
+    'ws://35.227.57.155:46658/queryws'
+    // For extdev
+    // 'extdev-plasma-us1',
+    // 'wss://extdev-plasma-us1.dappchains.com/websocket',
+    // 'wss://extdev-plasma-us1.dappchains.com/queryws'
 );
 // 関数呼び出し元のアドレス
 const from = LocalAddress.fromPublicKey(publicKey).toString();
 // LoomProviderを使って、web3クライアントをインスタンス化
 const web3 = new Web3(new LoomProvider(client, privateKey));
 
-const contractAddress = '0x0978bb422bb22d462c033eea557f648d6b9c6c38';
+const contractAddress = '0x920bd817aabd03068f85eb5ea2f6293e48d673c7';
 
 // Instantiate the contract and let it ready to be used
 const contract = new web3.eth.Contract(ToiwareToken.abi, contractAddress, {
