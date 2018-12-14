@@ -12,7 +12,9 @@ RUN apk add --no-cache --virtual .gyp \
         python \
         make \
         g++
-
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh
+    
 RUN yarn install
 
 CMD ["yarn", "start"]
