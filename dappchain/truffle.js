@@ -30,8 +30,8 @@ module.exports = {
     testenv_chain: {
       provider: function () {
         const chainId = 'default'
-        const writeUrl = 'http://35.227.57.155:46658/rpc'
-        const readUrl = 'http://35.227.57.155:46658/query'
+        const writeUrl = 'http://35.229.79.52:46658/rpc'
+        const readUrl = 'http://35.229.79.52:46658/query'
         return new LoomTruffleProvider(chainId, writeUrl, readUrl, privateKey)
       },
       network_id: '*'
