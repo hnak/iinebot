@@ -26,7 +26,7 @@ rtm.on('reaction_added', (event) => {
         loom.send(address).then(() => {
             loom.getBalance(address).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                console.log(message);
+                slack.postMessage(message);
             });
         });
     });
