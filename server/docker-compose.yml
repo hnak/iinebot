@@ -10,7 +10,7 @@ services:
       - ./nginx/cert.key:/etc/nginx/cert.key
     ports:
       - "80:80"
-      - "443:46658"
+      - "443:443"
     environment:
       - DUMMY=dummy
     command: /bin/bash -c "envsubst '$$DUMMY' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
