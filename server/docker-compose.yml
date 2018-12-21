@@ -1,7 +1,7 @@
 version: '2'
 services:
   https-portal:
-    image: steveltn/https-portal:websocket
+    image: steveltn/https-portal:1
     ports:
       - '80:80'
       - '443:443'
@@ -13,6 +13,7 @@ services:
     environment:
       DOMAINS: 'bazaar-ec.tk -> http://35.229.79.52:46658'
       STAGE: 'production'
+      WEBSOCKET: true
       # FORCE_RENEW: 'true'
   app:
     build: .
