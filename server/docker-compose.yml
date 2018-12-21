@@ -1,20 +1,18 @@
 version: '2'
 services:
-  proxy:
-    restart: always
-    image: nginx
-    container_name: nginx_proxy
-    volumes:
-      - ./nginx/mysite.template:/etc/nginx/conf.d/mysite.template
-      - ./nginx/cert.pem:/etc/nginx/cert.pem
-      - ./nginx/cert.key:/etc/nginx/cert.key
+  https-portal:
+    image: steveltn/https-portal:websocket
     ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      - DUMMY=dummy
-    command: /bin/bash -c "envsubst '$$DUMMY' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
-    links:
+      - '80:80'
+      - '443:443'
+    depends_on:
       - app
+    volumes_from:        
+      - app
+    restart: always
+    environment:
+      DOMAINS: 'bazaar-ec.tk -> http://35.229.79.52:46658'
+      STAGE: 'production'
+      # FORCE_RENEW: 'true'
   app:
     build: .
