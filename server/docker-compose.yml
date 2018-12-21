@@ -13,7 +13,7 @@ services:
     environment:
       DOMAINS: 'bazaar-ec.tk -> http://35.229.79.52:46658'
       STAGE: 'production'
-      WEBSOCKET: true
+      WEBSOCKET: 'true'
       # FORCE_RENEW: 'true'
   app:
     build: .
