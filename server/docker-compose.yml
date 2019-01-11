@@ -11,7 +11,7 @@ services:
       - app
     restart: always
     environment:
-      DOMAINS: 'bazaar-ec.tk -> http://35.229.79.52:46658'
+      DOMAINS: 'bazaar.community -> http://35.237.226.230:46658'
       STAGE: 'production'
       WEBSOCKET: 'true'
       # FORCE_RENEW: 'true'
