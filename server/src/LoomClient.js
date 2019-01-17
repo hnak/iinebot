@@ -14,8 +14,8 @@ const client = new Client(
     // 'ws://127.0.0.1:46658/queryws'
     // For Test
     'default',
-    'wss://bazaar.community/websocket',
-    'wss://bazaar.community/queryws'
+    'wss://bazaar.organic/websocket',
+    'wss://bazaar.organic/queryws'
     // For extdev
     // 'extdev-plasma-us1',
     // 'wss://extdev-plasma-us1.dappchains.com/websocket',

@@ -23,11 +23,16 @@ rtm.on('reaction_added', (event) => {
     }
     slack.getAddressFromSlackId(event.item_user).then((user) => {
         address = user.address;
-        loom.send(address).then(() => {
+        loom.send(address)
+        .then(() => {
             loom.getBalance(address).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
                 slack.postMessage(message);
             });
+        })
+        .catch((reason) => {
+            // 失敗時の処理
+            slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
         });
     });
 });
