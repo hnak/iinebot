@@ -20,6 +20,7 @@ const targetUsers = [
   'UCEKW76HY', // 古岩井めぐみ
   'UCL22R1PF', // 岡田雄弥
   'UDT28F7FE', // 三雲晴雄
+  'UGDPBF160', // 杉岡
 ]
 // getSlackUsersメソッドから生成したマスターデータ
 const users = [
@@ -70,12 +71,15 @@ const users = [
   address: '0x936c5b37414c20e221bec542ee53744d1a025460' },
   { id: 'UDT28F7FE',
   name: '三雲晴雄',
-  address: '0xd2a429b99c76c1c84e5e2dc87f13db865cedd23c' } 
+  address: '0xd2a429b99c76c1c84e5e2dc87f13db865cedd23c' },
+  { id: 'UGDPBF160',
+  name: '杉岡',
+  address: '0x82631fcbcb046f5f1742bee36740af117ea2579c' } 
 ]
 
 dotenv.load();
 const botToken = process.env.SLACK_BOT_TOKEN || '';
-const SEND_CHANNEL = 'test';
+const SEND_CHANNEL = 'test';//ここで定義すれば他のチャンネルにも表示可能
 
 class SlackUser {
     async getAddressFromSlackId(id) {
@@ -114,5 +118,6 @@ class SlackUser {
     getUsers() {
       return users;
     };
+
 }
 module.exports = SlackUser;
