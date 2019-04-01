@@ -1,63 +1,45 @@
-const { RTMClient } = require('@slack/client');//
-const dotenv = require('dotenv');//
+const { RTMClient } = require('@slack/client');
+const dotenv = require('dotenv');
 const LoomClient = require('./LoomClient');
 const SlackUser = require('./SlackUser');
 const CronJob = require('cron').CronJob;
 
-dotenv.load();//
+dotenv.load();
 
-const botToken = process.env.SLACK_BOT_TOKEN || '';//
+const botToken = process.env.SLACK_BOT_TOKEN || '';
 
-const rtm = new RTMClient(botToken); //bottokenを規定
+const rtm = new RTMClient(botToken); 
 rtm.start();//RTM = Real Time Message
 
 const loom = new LoomClient();
 const slack = new SlackUser();
 const map  = new Map();
 
-rtm.on('reaction_added', (event) => {//addedはslcakの機能、eventはslackからもらう引数
+rtm.on('reaction_added', (event) => {
     let address;//いいねされた人
     let sendAddress;
     console.log(`User ${event.user} reacted with ${event.reaction} item user ${event.item_user}`);
-    //アクションした人、そのアクション、アクションされた人を呼び出す
-    if (event.user === event.item_user) {//自分に対して何かしたら何も返さない
-        return//ここで終了下には行かない　
+    if (event.user === event.item_user) {//自分に対していいねしたら何も返さない
+        return
     }
-    let array = map.get(event.user)//配列を定義
-    if (array === undefined) {//配列がなかったら
+    let array = map.get(event.user)
+    if (array === undefined) {
         array = new Array　
-        map.set(event.user, array)//valueに配列追加
+        map.set(event.user, array)
     }
-    if (array.includes(event.item.ts) === true) {//タイムスタンプあったらリターン
+    if (array.includes(event.item.ts) === true) {
         return
     } else {
-        array.push(event.item.ts)//なければタイムスタンプを配列に追加
+        array.push(event.item.ts)//初めてのいいねならタイムスタンプを配列に追加（DBを使ってないのでloom止まれば消える）
     }
+
     slack.getAddressFromSlackId(event.item_user).then((user) => {//いいねされた人が１トークンもらう
-        address = user.address;//addressにユーザー名を入れる
-        loom.send(address)//アドレスを元にトークンに１足す
-        .then(() => {//成功したらこれ
-            loom.getBalance(address).then((balance) => {//アドレスを元にバランスを取得し
+        address = user.address;
+        loom.send(address)
+        .then(() => {
+            loom.getBalance(address).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                // slack.postMessage(message);//メッセージをslackに送信
-                console.log(message);
-                
-            });
-        })
-        .catch((reason) => {
-            // 失敗時の処理
-            slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
-        });
-    });
-    
-    // いいねした人にもトークン付与
-    slack.getAddressFromSlackId(event.user).then((user) => {//いいねした人が0.5トークンもらう
-        sendAddress = user.address;//addressにユーザー名を入れる
-        loom.harfSend(sendAddress)
-        .then(() => {//成功したらこれ
-            loom.getBalance(sendAddress).then((balance) => {//アドレスを元にバランスを取得し
-                const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                // slack.postMessage(message);//メッセージをslackに送信
+                slack.postMessage(message);
                 console.log(message);
             });
         })
@@ -66,14 +48,31 @@ rtm.on('reaction_added', (event) => {//addedはslcakの機能、eventはslackか
             slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
         });
     });
-    // aggregate();
+    setTimeout(() => {//ほぼ同時にいいねすると反応できないので１秒後に次の動作をする
+        slack.getAddressFromSlackId(event.user).then((user) => {//いいねした人が１トークンもらう
+            sendAddress = user.address;
+            loom.harfSend(sendAddress)
+            .then(() => {
+                loom.getBalance(sendAddress).then((balance) => {
+                    const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
+                    slack.postMessage(message);
+                    console.log(message);
+                });
+            })
+            .catch((reason) => {
+                // 失敗時の処理
+                slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
+            });
+        });
+    },1000)
+    console.log(map.get(event.user));
 });
 
 async function aggregate() {
-    let message = 'トークン獲得ランキング\n'//{}内のみ有効
+    let message = 'トークン獲得ランキング\n'
     let results = [];
-    const users = slack.getUsers();//usersに全員の名前を入れる
-    for( var user of users ) {//usersをuserに入れて全員分回す
+    const users = slack.getUsers();
+    for( var user of users ) {
         await loom.getBalance(user.address).then((balance) => {
             results.push({user_name:user.name, user_balance:balance}); //集計結果を配列に代入
         }); 
@@ -86,13 +85,27 @@ async function aggregate() {
     for ( i = 0; i<results.length; i++ ) {
         var result = results[i];
         message = message +  [i+1] + "位  " + result.user_balance + ' ' + result.user_name + '\n';
-    }
-    console.log(message);
-    // slack.postMessage(message);//slackに表示する　　　
-}
+    }//左詰めで桁数が変わるたびに見えにくいので、綺麗にしたい
+    slack.postMessage(message);
+};
 
+    // 誰かにトークンを送る機能をつけたかったが、Solidityを変えないといけないっぽいので断念。後ほど
+    // let address = "0x82631fcbcb046f5f1742bee36740af117ea2579c";
+    //     loom.comeback(address)
+    //     .then(() => {
+    //         loom.getBalance(address).then((balance) => {
+    //             const mess =  balance　+ " " + 'トークンを返しました';
+    //             // slack.postMessage(message);
+    //             console.log(mess);
+    //         });
+    //     })
+    //     .catch((reason) => {
+    //         // 失敗時の処理
+    //         // slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
+    //         console.log("miss");
+    //     });　　
 
-const job = new CronJob({//定時でやる作業
+const job = new CronJob({
     /*
     Seconds: 0-59
     Minutes: 0-59

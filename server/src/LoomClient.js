@@ -35,15 +35,18 @@ const contract = new web3.eth.Contract(ToiwareToken.abi, contractAddress, {
 
 class LoomClient {
     async getBalance(address) {
-      return await contract.methods.balanceOf(address).call();//呼びだすアドレスを元にバランスを
-    }//待機中、asyncは非同期関数でイベントループを介して実行暗黙的にpromiseを返す
+      return await contract.methods.balanceOf(address).call();
+    }
   
     async send(to) {
       await contract.methods.transfer(to, 1).send();//トークンを１送る
     }
     async harfSend(to) {
-      await contract.methods.transfer(to, 1).send();//トークンを0.5送る
+      await contract.methods.transfer(to, 1).send();//トークンを1送る。本当は０.5など1以外にしたかった
     }
+    // async comeback(from) {誰かにトークンを送る機能をつけたかったが、Solidityを変えないといけないっぽいので断念。後ほど
+    //   await contract.methods.transfer(from, contractAddress, 1).send();
+    // }
 }
 module.exports = LoomClient;
 

@@ -79,7 +79,7 @@ const users = [
 
 dotenv.load();
 const botToken = process.env.SLACK_BOT_TOKEN || '';
-const SEND_CHANNEL = 'test';//ここで定義すれば他のチャンネルにも表示可能
+const SEND_CHANNEL = 'test';
 
 class SlackUser {
     async getAddressFromSlackId(id) {
