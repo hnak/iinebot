@@ -21,33 +21,29 @@ rtm.start();//RTM = Real Time Message
 
 const loom = new LoomClient();
 const slack = new SlackUser();
-const map  = new Map();
 
-rtm.on('reaction_added', (event) => {
+rtm.on('reaction_added', async (event) => {
     let address;//いいねされた人
     let sendAddress;
     console.log(`User ${event.user} reacted with ${event.reaction} item user ${event.item_user}`);
     if (event.user === event.item_user) {//自分に対していいねしたら何も返さない
-        return
+        return;
     }
-    let array = map.get(event.user)
-    if (array === undefined) {
-        array = new Array　
-        map.set(event.user, array)
-    }
-    if (array.includes(event.item.ts) === true) {
-        return
+    connection.query = util.promisify(connection.query)
+    var rus = await connection.query("SELECT * FROM " + event.user + " where timestamp = '" + event.item.ts + "';")
+    // .then(() => {
+    if (rus.length > 0){
+        return;
     } else {
-        array.push(event.item.ts)//初めてのいいねならタイムスタンプを配列に追加（DBを使ってないのでloom止まれば消える）
+        await connection.query("INSERT INTO " + event.user + " (timestamp) SELECT '" + event.item.ts +  "' WHERE NOT EXISTS(SELECT * FROM " + event.user + " WHERE timestamp = '" + event.item.ts + "');")
     }
-
     slack.getAddressFromSlackId(event.item_user).then((user) => {//いいねされた人が１トークンもらう
         address = user.address;
         loom.send(address)
         .then(() => {
             loom.getBalance(address).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                slack.postMessage(message);
+                // slack.postMessage(message);
                 console.log(message);
             });
         })
@@ -57,24 +53,25 @@ rtm.on('reaction_added', (event) => {
         });
     });
     setTimeout(() => {//ほぼ同時にいいねすると反応できないので１秒後に次の動作をする
-        slack.getAddressFromSlackId(event.user).then((user) => {//いいねした人が１トークンもらう
-            sendAddress = user.address;
-            loom.harfSend(sendAddress)
-            .then(() => {
-                loom.getBalance(sendAddress).then((balance) => {
-                    const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                    slack.postMessage(message);
-                    console.log(message);
-                });
-            })
-            .catch((reason) => {
-                // 失敗時の処理
-                slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
+
+    slack.getAddressFromSlackId(event.user).then((user) => {//いいねした人が１トークンもらう
+        sendAddress = user.address;
+        loom.harfSend(sendAddress)
+        .then(() => {
+            loom.getBalance(sendAddress).then((balance) => {
+                const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
+                // slack.postMessage(message);
+                console.log(message);
             });
+        })
+        .catch((reason) => {
+            // 失敗時の処理
+            slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
         });
+    });
     },1000)
-    // console.log(map.get(event.user));
 });
+
 
 async function aggregate() {
     let message = 'トークン獲得ランキング\n'
@@ -92,6 +89,8 @@ async function aggregate() {
         return user_balance2 - user_balance1;
     });
     connection.connect();
+    connection.query('delete from daily');
+
     for ( i = 0; i<results.length; i++ ) {
         var result = results[i];
         message = message +  [i+1] + "位  " + result.user_balance + ' ' + result.user_name + '\n';
@@ -101,7 +100,7 @@ async function aggregate() {
     }//左詰めで桁数が変わるたびに見えにくいので、綺麗にしたい
     slack.postMessage(message);
     connection.end();
-    console.log(message);
+    // console.log(message);
     //結果をDBから取ってきて配列に代入。
 };
 
@@ -159,6 +158,8 @@ async function compare(){
     },1000);
 };
 
+compare();
+
     // 誰かにトークンを送る機能をつけたかったが、Solidityを変えないといけないっぽいので断念。後ほど
     // let address = "0x82631fcbcb046f5f1742bee36740af117ea2579c";
     //     loom.comeback(address)
@@ -201,7 +202,7 @@ const rank = new CronJob({
     Months: 0-11
     Day of Week: 0-6
     */
-    cronTime: '0 55 8 * * *', // 毎日午前8時55分に送信
+    cronTime: '0 0 19 * * *', // 毎日19時に送信
     onTick: compare,
     start: false,
     timeZone: 'Asia/Tokyo'
