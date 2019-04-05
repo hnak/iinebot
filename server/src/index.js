@@ -44,7 +44,6 @@ rtm.on('reaction_added', async (event) => {
             loom.getBalance(address).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
                 slack.postMessage(message);
-                console.log(message);
             });
         })
         .catch((reason) => {
@@ -61,7 +60,6 @@ rtm.on('reaction_added', async (event) => {
             loom.getBalance(sendAddress).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
                 slack.postMessage(message);
-                console.log(message);
             });
         })
         .catch((reason) => {
@@ -98,9 +96,8 @@ async function aggregate() {
         data.push({name:result.user_name, points:result.user_balance});
         connection.query("INSERT INTO daily set ?", data)
     }//左詰めで桁数が変わるたびに見えにくいので、綺麗にしたい
-    slack.postMessage(message);
     connection.end();
-    //結果をDBから取ってきて配列に代入。
+    slack.postMessage(message);
 };
 
 
@@ -153,7 +150,7 @@ async function compare(){
         var result = results[i];
         message = message +  [i+1] + "位  " + result.user_balance + ' ' + result.user_name + '\n';
     }
-    console.log(message);
+    slack.postMessage(message);
     },1000);
 };
 
