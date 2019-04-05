@@ -31,7 +31,7 @@ rtm.on('reaction_added', async (event) => {
     }
     connection.query = util.promisify(connection.query)
     var rus = await connection.query("SELECT * FROM " + event.user + " where timestamp = '" + event.item.ts + "';")
-    // .then(() => {
+
     if (rus.length > 0){
         return;
     } else {
@@ -43,7 +43,7 @@ rtm.on('reaction_added', async (event) => {
         .then(() => {
             loom.getBalance(address).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                // slack.postMessage(message);
+                slack.postMessage(message);
                 console.log(message);
             });
         })
@@ -52,15 +52,15 @@ rtm.on('reaction_added', async (event) => {
             slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
         });
     });
-    setTimeout(() => {//ほぼ同時にいいねすると反応できないので１秒後に次の動作をする
 
+    setTimeout(() => {//ほぼ同時にいいねすると反応できないので１秒後に次の動作をする
     slack.getAddressFromSlackId(event.user).then((user) => {//いいねした人が１トークンもらう
         sendAddress = user.address;
         loom.harfSend(sendAddress)
         .then(() => {
             loom.getBalance(sendAddress).then((balance) => {
                 const message = 'トークンを獲得しました！' + user.name + ' さんの所持トークン: ' + balance;
-                // slack.postMessage(message);
+                slack.postMessage(message);
                 console.log(message);
             });
         })
@@ -100,7 +100,6 @@ async function aggregate() {
     }//左詰めで桁数が変わるたびに見えにくいので、綺麗にしたい
     slack.postMessage(message);
     connection.end();
-    // console.log(message);
     //結果をDBから取ってきて配列に代入。
 };
 
@@ -158,23 +157,6 @@ async function compare(){
     },1000);
 };
 
-compare();
-
-    // 誰かにトークンを送る機能をつけたかったが、Solidityを変えないといけないっぽいので断念。後ほど
-    // let address = "0x82631fcbcb046f5f1742bee36740af117ea2579c";
-    //     loom.comeback(address)
-    //     .then(() => {
-    //         loom.getBalance(address).then((balance) => {
-    //             const mess =  balance　+ " " + 'トークンを返しました';
-    //             // slack.postMessage(message);
-    //             console.log(mess);
-    //         });
-    //     })
-    //     .catch((reason) => {
-    //         // 失敗時の処理
-    //         // slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
-    //         console.log("miss");
-    //     });　　
 
 const job = new CronJob({
     /*
