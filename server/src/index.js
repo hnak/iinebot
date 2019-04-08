@@ -21,6 +21,8 @@ rtm.start();//RTM = Real Time Message
 
 const loom = new LoomClient();
 const slack = new SlackUser();
+const usersId = slack.getUsersID();
+
 
 rtm.on('reaction_added', async (event) => {
     let address;//いいねされた人
@@ -30,12 +32,11 @@ rtm.on('reaction_added', async (event) => {
         return;
     }
     connection.query = util.promisify(connection.query)
-    var rus = await connection.query("SELECT * FROM " + event.user + " where timestamp = '" + event.item.ts + "';")
-
+    var rus = await connection.query(`SELECT * FROM timestamps where ${event.user} = '${event.item.ts}';`)
     if (rus.length > 0){
         return;
     } else {
-        await connection.query("INSERT INTO " + event.user + " (timestamp) SELECT '" + event.item.ts +  "' WHERE NOT EXISTS(SELECT * FROM " + event.user + " WHERE timestamp = '" + event.item.ts + "');")
+        await connection.query(`INSERT INTO timestamps (${event.user}) SELECT '${event.item.ts}' WHERE NOT EXISTS(SELECT * FROM timestamps WHERE ${event.user} = '${event.item.ts}');`)
     }
     slack.getAddressFromSlackId(event.item_user).then((user) => {//いいねされた人が１トークンもらう
         address = user.address;
@@ -51,7 +52,6 @@ rtm.on('reaction_added', async (event) => {
             slack.postMessage('ERROR: dappchainへのアクセスが失敗しました。');
         });
     });
-
     setTimeout(() => {//ほぼ同時にいいねすると反応できないので１秒後に次の動作をする
     slack.getAddressFromSlackId(event.user).then((user) => {//いいねした人が１トークンもらう
         sendAddress = user.address;
@@ -111,7 +111,7 @@ async function compare(){
     } catch (err) {
       throw new Error(err)
     }
-    for (let i = 0; i < 17; i++) {//17は参加人数が変われば変更の必要あり
+    for (let i = 0; i < rows.length; i++) {
         var oldName = rows[i].name;
         var oldPoints = rows[i].points;
         oldMap.set(oldName, oldPoints);
@@ -127,16 +127,27 @@ async function compare(){
     setTimeout(() => {
     let message = '今日のトークン取得数ランキング\n'
     let results = [];
-    for (let oKey of oldMap.keys()) {
-        for (let lKey of latestMap.keys()) {    
-            let number1 = latestMap.get(lKey);
+    let oldKeys = [];
+    for (let o of oldMap.keys()) { 
+        oldKeys.push(o);
+    }
+    for (let lKey of latestMap.keys()) {
+        let number1 = latestMap.get(lKey);
+        if (oldKeys.includes(lKey) === false) {
+            if (results.includes(lKey) === true) {
+                return
+            }else{
+                results.push({user_name:lKey, user_balance:number1})
+            }
+        }
+        for (let oKey of oldMap.keys()) {    
             let number2 = oldMap.get(oKey);
-            let dif = number1 - number2;   
+            let dif = number1 - number2;
             if (oKey === lKey) {    
                 if (dif === 0) {
-                    results.push({user_name:oKey, user_balance:0});
+                    results.push({user_name:lKey, user_balance:0});
                     }else{
-                    results.push({user_name:oKey, user_balance:dif});
+                    results.push({user_name:lKey, user_balance:dif});
                 }
             }
         }
@@ -150,10 +161,33 @@ async function compare(){
         var result = results[i];
         message = message +  [i+1] + "位  " + result.user_balance + ' ' + result.user_name + '\n';
     }
-    slack.postMessage(message);
+    // slack.postMessage(message);
+    console.log(message);
+    
     },1000);
 };
 
+async function confirm () {
+    connection.query = util.promisify(connection.query)
+    let ids = await connection.query(`SELECT id FROM users;`)
+    let dbIds = [];
+    if (ids.length === usersId.length){
+        return
+    } else {
+        for (let i = 0; i < ids.length; i++) {
+            var dbId = ids[i].id;
+            dbIds.push(dbId);
+        }
+        for (let id of usersId){
+            if (dbIds.includes(id)) {
+                ;
+            }else{
+                connection.query(`INSERT INTO users (id) value ('${id}');`)
+                connection.query(`ALTER TABLE timestamps ADD COLUMN ${id} varchar(20);`)
+            }
+        }
+    }
+};
 
 const job = new CronJob({
     /*
@@ -173,16 +207,8 @@ const job = new CronJob({
 job.start();
 
 const rank = new CronJob({
-    /*
-    Seconds: 0-59
-    Minutes: 0-59
-    Hours: 0-23
-    Day of Month: 1-31
-    Months: 0-11
-    Day of Week: 0-6
-    */
     cronTime: '0 0 19 * * *', // 毎日19時に送信
-    onTick: compare,
+    onTick: compare,confirm,
     start: false,
     timeZone: 'Asia/Tokyo'
 });

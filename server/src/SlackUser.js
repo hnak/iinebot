@@ -119,5 +119,9 @@ class SlackUser {
       return users;
     };
 
+    getUsersID(){
+      return targetUsers;
+    }
+
 }
 module.exports = SlackUser;
