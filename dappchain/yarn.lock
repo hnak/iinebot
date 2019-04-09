@@ -1345,10 +1345,10 @@ lodash@4, lodash@^4.17.11:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
 
-loom-js@^1.27.1:
-  version "1.34.0"
-  resolved "https://registry.yarnpkg.com/loom-js/-/loom-js-1.34.0.tgz#06f8f2495efb8223a27303ffa260f702257fa941"
-  integrity sha512-88pRRUE2z8V4lV23eXwh1Yl7zHHgnEhxRLdn1xfFc115NkC5iQp1qiDKbu+SBIWqga6GRU8m3vq2wQN124VRZA==
+loom-js@^1.40.0:
+  version "1.46.2"
+  resolved "https://registry.yarnpkg.com/loom-js/-/loom-js-1.46.2.tgz#961895adb2a5bc905039dec9254edc27398788c6"
+  integrity sha512-EjRj9CDn19f1b4tfV9fa3FSec9ZmYyKEF4mhlPVAMbUFgSBPHuXkx1iukQV5K8ouTJNP8ob8poBbCZ+9oh1p0g==
   dependencies:
     abi-decoder "^1.2.0"
     axios "^0.18.0"
@@ -1370,15 +1370,15 @@ loom-js@^1.27.1:
     tweetnacl "^1.0.0"
     web3 "1.0.0-beta.33"
 
-loom-truffle-provider@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/loom-truffle-provider/-/loom-truffle-provider-0.8.0.tgz#440cdf53fdc5d72d58de3125ec7e0761d855da01"
-  integrity sha512-OjGPLtr6OniNAdKdlpH2i4kh6tLBsm89bSPw1M6SzefcokD4ph6Nlx++peDNrOZQ8sdt3hugj3P+LmDLa22vzQ==
+loom-truffle-provider@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/loom-truffle-provider/-/loom-truffle-provider-0.13.0.tgz#eccdaf88388459f61312deec96b34891af89c88d"
+  integrity sha512-qow+7r90vqgZFmL9c95awCugYpZL4P5D9xN9UrRxjoCAsJXG6tbvWU5USt1zyGed7wcSaVLwxbEnW7odRP/sMg==
   dependencies:
     bip39 "^2.5.0"
     bn.js "^4.11.8"
     ed25519-hd-key "^1.0.0"
-    loom-js "^1.27.1"
+    loom-js "^1.40.0"
 
 lowdb@^1.0.0:
   version "1.0.0"
@@ -1588,10 +1588,10 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-openzeppelin-solidity@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/openzeppelin-solidity/-/openzeppelin-solidity-2.0.0.tgz#b45dddbdae090f89577598c1a7e7518df61b7ba2"
-  integrity sha512-SolpxQFArtiYnlSNg3dZ9sz0WVlKtPqSOcJkXRllaZp4+Lpfqz3vxF0yoh7g75TszKPyadqoJmU7+GM/vwh9SA==
+openzeppelin-solidity@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/openzeppelin-solidity/-/openzeppelin-solidity-2.1.3.tgz#34aea40c2d05665f0dd6bc021e48516cf25b1ef6"
+  integrity sha512-Zz595xw6w4ZrNU3JJJTlPd8bHFbHv5OkJlkqsM2i+NBs6CzImoHI3dZ+nmhkfR+p52cGXKmayAGbnfdCum1SMg==
 
 p-cancelable@^0.3.0:
   version "0.3.0"

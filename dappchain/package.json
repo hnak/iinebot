@@ -13,7 +13,7 @@
     "deploy:extdev": "rm -rf build; truffle migrate --reset --network extdev_plasma_us1"
   },
   "dependencies": {
-    "loom-truffle-provider": "^0.8.0",
-    "openzeppelin-solidity": "^2.0.0"
+    "loom-truffle-provider": "0.8.0",
+    "openzeppelin-solidity": "2.0.0"
   }
 }
