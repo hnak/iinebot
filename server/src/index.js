@@ -21,8 +21,8 @@ rtm.start();//RTM = Real Time Message
 
 const loom = new LoomClient();
 const slack = new SlackUser();
+const users = slack.getUsers();
 const usersId = slack.getUsersID();
-
 
 rtm.on('reaction_added', async (event) => {
     let address;//いいねされた人
@@ -75,7 +75,6 @@ async function aggregate() {
     let message = 'トークン獲得ランキング\n'
     let results = [];
     let data = [];
-    const users = slack.getUsers();
     for( var user of users ) {
         await loom.getBalance(user.address).then((balance) => {
             results.push({user_name:user.name, user_balance:balance}); //集計結果を配列に代入
@@ -112,58 +111,39 @@ async function compare(){
       throw new Error(err)
     }
     for (let i = 0; i < rows.length; i++) {
-        var oldName = rows[i].name;
-        var oldPoints = rows[i].points;
+        let oldName = rows[i].name;
+        let oldPoints = rows[i].points;
         oldMap.set(oldName, oldPoints);
     };
-
-    const latestMap = new Map();
-    const users = slack.getUsers();
-    for( var user of users ) {
-        await loom.getBalance(user.address).then((balance) => {
-            latestMap.set(user.name, balance);
-        }); 
-    };
-    setTimeout(() => {
-    let message = '今日のトークン取得数ランキング\n'
-    let results = [];
-    let oldKeys = [];
-    for (let o of oldMap.keys()) { 
-        oldKeys.push(o);
-    }
-    for (let lKey of latestMap.keys()) {
-        let number1 = latestMap.get(lKey);
-        if (oldKeys.includes(lKey) === false) {
-            if (results.includes(lKey) === true) {
-                return
-            }else{
-                results.push({user_name:lKey, user_balance:number1})
-            }
-        }
-        for (let oKey of oldMap.keys()) {    
-            let number2 = oldMap.get(oKey);
-            let dif = number1 - number2;
-            if (oKey === lKey) {    
+    setTimeout( async() => {
+        let message = '今日のトークン取得数ランキング\n'
+        let results = [];
+        for (let user of users) {
+            let number1 = await loom.getBalance(user.address);
+            if (oldMap.has(user.name) === false) {
+                if (results.includes(user.name) === false) {
+                    results.push({user_name:user.name, user_balance:number1})
+                }
+            } else {
+                let number2 = oldMap.get(user.name);
+                let dif = number1 - number2;
                 if (dif === 0) {
-                    results.push({user_name:lKey, user_balance:0});
-                    }else{
-                    results.push({user_name:lKey, user_balance:dif});
+                    results.push({user_name:user.name, user_balance:0});
+                }else{
+                    results.push({user_name:user.name, user_balance:dif});
                 }
             }
         }
-    }
-    results.sort(function (user1, user2) {//降順にソート
-        let user_balance1 = user1["user_balance"];
-        let user_balance2 = user2["user_balance"];
-        return user_balance2 - user_balance1;
-    });
-    for ( i = 0; i<results.length; i++ ) {
-        var result = results[i];
-        message = message +  [i+1] + "位  " + result.user_balance + ' ' + result.user_name + '\n';
-    }
-    // slack.postMessage(message);
-    console.log(message);
-    
+        results.sort(function (user1, user2) {//降順にソート
+            let user_balance1 = user1["user_balance"];
+            let user_balance2 = user2["user_balance"];
+            return user_balance2 - user_balance1;
+        });
+        for ( i = 0; i<results.length; i++ ) {
+            var result = results[i];
+            message = message +  [i+1] + "位  " + result.user_balance + ' ' + result.user_name + '\n';
+        }
+        slack.postMessage(message);
     },1000);
 };
 

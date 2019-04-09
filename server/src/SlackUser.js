@@ -20,7 +20,10 @@ const targetUsers = [
   'UCEKW76HY', // 古岩井めぐみ
   'UCL22R1PF', // 岡田雄弥
   'UDT28F7FE', // 三雲晴雄
-  'UGDPBF160', // 杉岡
+  'UGDPBF160', // Sugioka Hiroo
+  'UF1GXA30C', // 上月
+  'UH9MGAWG7', // mikami
+  'U7EGYVD5L', // tetsuya katayama
 ]
 // getSlackUsersメソッドから生成したマスターデータ
 const users = [
@@ -73,8 +76,17 @@ const users = [
   name: '三雲晴雄',
   address: '0xd2a429b99c76c1c84e5e2dc87f13db865cedd23c' },
   { id: 'UGDPBF160',
-  name: '杉岡',
-  address: '0x82631fcbcb046f5f1742bee36740af117ea2579c' } 
+  name: 'Sugioka Hiroo',
+  address: '0x82631fcbcb046f5f1742bee36740af117ea2579c' } ,
+  { id: 'UF1GXA30C',
+  name: '上月',
+  address: '0x059bb198cb14123a851490db877c261a47fb1a1c' },
+  { id: 'UH9MGAWG7',
+  name: 'mikami',
+  address: '0xe4e7645554df94293fb6c3a2c80df6692853089c' },
+  { id: 'U7EGYVD5L',
+  name: 'tetsuya katayama',
+  address: '0x07c7c4e16c77a9ce4de9cabe52dd57b01d7a7a73' },
 ]
 
 dotenv.load();

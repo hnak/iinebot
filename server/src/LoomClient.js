@@ -3,7 +3,7 @@ const { Client, LocalAddress, CryptoUtils, LoomProvider } = require('loom-js');
 const ToiwareToken = require('../abi/ToiwareToken.json');
 
 const privateKeyBase64 ='4J4On/kqG74sNyI/aaf7e5599fb7G+d69HIj7yQ/W/UsKkUhUjIG+H7luSNZrnb4dtVeLy5O1m7UaXtCBr/W5g==';
-  // 'd3HS0RqXRyiXX3vYpHnXpmr0FA/0bjMbtnUhkDuGN5JjMqRrUMiJ/ucXYDdbffXEoyPhLoii0JyHwH+75ZZSkg==';
+// 'd3HS0RqXRyiXX3vYpHnXpmr0FA/0bjMbtnUhkDuGN5JjMqRrUMiJ/ucXYDdbffXEoyPhLoii0JyHwH+75ZZSkg=='
 const privateKey = CryptoUtils.B64ToUint8Array(privateKeyBase64);
 const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey);
 // loom接続クライアントを作成
@@ -45,9 +45,6 @@ class LoomClient {
     async harfSend(to) {
       await contract.methods.transfer(to, 1).send();//トークンを1送る。本当は０.5など1以外にしたかった
     }
-    // async comeback(from) {誰かにトークンを送る機能をつけたかったが、Solidityを変えないといけないっぽいので断念。後ほど
-    //   await contract.methods.transfer(from, contractAddress, 1).send();
-    // }
 }
 module.exports = LoomClient;
 
