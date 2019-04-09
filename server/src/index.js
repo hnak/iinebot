@@ -119,19 +119,12 @@ async function compare(){
         let message = '今日のトークン取得数ランキング\n'
         let results = [];
         for (let user of users) {
-            let number1 = await loom.getBalance(user.address);
-            if (oldMap.has(user.name) === false) {
-                if (results.includes(user.name) === false) {
-                    results.push({user_name:user.name, user_balance:number1})
-                }
+            let currentBalance = await loom.getBalance(user.address);
+            let oldBalance = oldMap.get(user.name);
+            if (!oldBalance) {
+                results.push({user_name:user.name, user_balance:currentBalance})
             } else {
-                let number2 = oldMap.get(user.name);
-                let dif = number1 - number2;
-                if (dif === 0) {
-                    results.push({user_name:user.name, user_balance:0});
-                }else{
-                    results.push({user_name:user.name, user_balance:dif});
-                }
+                results.push({user_name:user.name, user_balance:currentBalance - oldBalance});
             }
         }
         results.sort(function (user1, user2) {//降順にソート
